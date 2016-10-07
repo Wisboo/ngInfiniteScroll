@@ -42,5 +42,6 @@ git add build
 git add bower.json
 
 git commit -am "Release version $TRAVIS_TAG"
+git tag -d "$TRAVIS_TAG" || true
 git tag "$TRAVIS_TAG"
-git push origin $TARGET_BRANCH $TRAVIS_TAG
+git push origin -f $TARGET_BRANCH $TRAVIS_TAG
