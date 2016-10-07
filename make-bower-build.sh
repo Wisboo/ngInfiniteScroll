@@ -18,15 +18,14 @@ ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
 ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
 ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
 ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in id_ed25519_nginfinite.enc -out deploy_key -d
+openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in id_rsa_nginfinite.enc -out deploy_key -d
 chmod 600 deploy_key
-eval `ssh-agent -s`
-ssh-add deploy_key
 
 BOWER_REPO='git@github.com:ng-infinite-scroll/ng-infinite-scroll-bower.git'
 
 BOWER_REPO_DIR='out'
 CWD="$PWD"
+GIT_SSH_COMMAND='ssh -i deploy_key'
 
 git clone $BOWER_REPO $BOWER_REPO_DIR
 cd $BOWER_REPO_DIR
@@ -37,10 +36,10 @@ git config user.email "$COMMIT_AUTHOR_EMAIL"
 
 # Copy all build content to the bower repo
 cp -r ../build .
-cp -r ../src .
+cp ../inert-bower.json bower.json
 
 git add build
-git add src
+git add bower.json
 
 git commit -am "Release version $TRAVIS_TAG"
 git tag "$TRAVIS_TAG"
